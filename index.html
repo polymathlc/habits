@@ -153,6 +153,45 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .hdl-key{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
 .hdl-val{font-size:.82rem;color:var(--text)}
 
+/* TRACKER TABLE */
+.tracker-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.tracker-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:auto;max-width:100%;box-shadow:0 4px 24px rgba(0,0,0,.2)}
+.tracker-table{border-collapse:separate;border-spacing:0;width:100%}
+.tracker-table thead th{background:var(--bg2);color:var(--text3);font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;padding:.9rem .35rem;font-weight:600;border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:sticky;top:0;z-index:2}
+.tracker-table thead th.habit-col{text-align:left;padding:.9rem 1.1rem;min-width:240px;left:0;z-index:3;font-size:.68rem}
+.tracker-table thead th.day-col{width:46px;min-width:46px;text-align:center}
+.tracker-table thead th.day-col .day-num{font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--text);line-height:1;display:block}
+.tracker-table thead th.day-col .day-dow{font-size:.58rem;color:var(--text3);margin-top:3px;letter-spacing:.06em;display:block}
+.tracker-table thead th.day-col.today{background:var(--amber-dim)}
+.tracker-table thead th.day-col.today .day-num{color:var(--amber)}
+.tracker-table thead th.day-col.today .day-dow{color:var(--amber-light)}
+.tracker-table tbody td{border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:0}
+.tracker-table tbody tr:last-child td{border-bottom:none}
+.tracker-table tbody tr:hover td.habit-cell{background:var(--bg3)}
+.tracker-table td.habit-cell{background:var(--bg2);position:sticky;left:0;z-index:1;padding:.9rem 1.1rem;min-width:240px;text-align:left;vertical-align:middle;transition:background var(--tr)}
+.tracker-table td.habit-cell .h-name{font-size:.92rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px;display:flex;align-items:center;gap:.4rem}
+.tracker-table td.habit-cell .h-meta{display:flex;align-items:center;gap:.6rem;font-size:.7rem;color:var(--text3)}
+.tracker-table td.habit-cell .h-meta .streak{color:var(--amber);font-weight:700}
+.tracker-table td.habit-cell .h-meta .h-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.85rem;padding:2px 6px;border-radius:4px;transition:all var(--tr);margin-left:auto}
+.tracker-table td.habit-cell .h-meta .h-del:hover{color:var(--red);background:var(--red-dim)}
+.tracker-table td.day-cell{width:46px;min-width:46px;height:48px;cursor:pointer;background:var(--bg3);transition:all var(--tr);text-align:center;vertical-align:middle;color:transparent;font-size:1.1rem;font-weight:700}
+.tracker-table td.day-cell:hover{background:var(--surface2);transform:scale(0.94)}
+.tracker-table td.day-cell.done{background:var(--green);color:#fff}
+.tracker-table td.day-cell.done::after{content:'✓'}
+.tracker-table td.day-cell.done:hover{background:#0ea371}
+.tracker-table td.day-cell.today{box-shadow:inset 0 0 0 2px var(--amber)}
+.tracker-table td.day-cell.future{background:transparent;cursor:not-allowed;opacity:.2;pointer-events:none}
+.tracker-legend{display:flex;align-items:center;gap:1.25rem;margin-top:1rem;font-size:.75rem;color:var(--text3);flex-wrap:wrap}
+.tracker-legend .lg-item{display:flex;align-items:center;gap:.45rem}
+.tracker-legend .lg-swatch{width:16px;height:16px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)}
+.tracker-legend .lg-swatch.done{background:var(--green);border-color:var(--green)}
+.tracker-legend .lg-swatch.today{box-shadow:inset 0 0 0 2px var(--amber);background:var(--bg3)}
+@media(max-width:700px){
+  .tracker-table thead th.habit-col,.tracker-table td.habit-cell{min-width:180px}
+  .tracker-table thead th.day-col,.tracker-table td.day-cell{width:38px;min-width:38px}
+  .tracker-table td.day-cell{height:42px}
+}
+
 /* PRINCIPLE CARDS */
 .pc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;display:flex;flex-direction:column;gap:.75rem;transition:all var(--tr)}
 .pc:hover{border-color:var(--amber);box-shadow:0 4px 24px var(--amber-glow);transform:translateY(-2px)}
@@ -272,7 +311,8 @@ textarea.form-input{resize:vertical;min-height:72px}
       <div class="brand">Atomic Habits<span>Polymath Tracker</span></div>
     </div>
     <div class="nav-sec">Navigation</div>
-    <button class="nav-btn active" data-page="dashboard" onclick="navigate('dashboard')"><span class="ni">🏠</span>Dashboard</button>
+    <button class="nav-btn active" data-page="tracker" onclick="navigate('tracker')"><span class="ni">📅</span>Tracker</button>
+    <button class="nav-btn" data-page="dashboard" onclick="navigate('dashboard')"><span class="ni">🏠</span>Dashboard</button>
     <button class="nav-btn" data-page="habits" onclick="navigate('habits')"><span class="ni">✅</span>My Habits<span class="badge" id="hbadge" style="display:none">0</span></button>
     <button class="nav-btn" data-page="principles" onclick="navigate('principles')"><span class="ni">📖</span>10 Principles</button>
     <button class="nav-btn" data-page="insights" onclick="navigate('insights')"><span class="ni">📊</span>Insights</button>
@@ -287,8 +327,28 @@ textarea.form-input{resize:vertical;min-height:72px}
 
   <main class="main">
 
+    <!-- TRACKER -->
+    <div class="page active" id="page-tracker">
+      <div class="page-header fb">
+        <div><h2>Habit Tracker</h2><p id="tracker-date-range">Tap any cell to toggle that day</p></div>
+        <div class="tracker-controls">
+          <button class="btn btn-ghost btn-sm" onclick="shiftTracker(-7)" title="Previous week">◀ Prev</button>
+          <button class="btn btn-ghost btn-sm" onclick="shiftTrackerToday()" title="Jump to today">Today</button>
+          <button class="btn btn-ghost btn-sm" onclick="shiftTracker(7)" title="Next week">Next ▶</button>
+          <button class="btn btn-primary" onclick="openModal()">＋ Add Habit</button>
+        </div>
+      </div>
+      <div class="tracker-wrap" id="tracker-zone"><div class="spinner"></div></div>
+      <div class="tracker-legend">
+        <div class="lg-item"><div class="lg-swatch"></div>Not done</div>
+        <div class="lg-item"><div class="lg-swatch done"></div>Done</div>
+        <div class="lg-item"><div class="lg-swatch today"></div>Today</div>
+        <div class="lg-item" style="margin-left:auto"><span>Click any cell to toggle · Hover to highlight</span></div>
+      </div>
+    </div>
+
     <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
+    <div class="page" id="page-dashboard">
       <div class="page-header fb">
         <div><h2>Good <span id="greet-time">morning</span> 👋</h2><p id="greet-date">—</p></div>
         <button class="btn btn-primary" onclick="openModal()">＋ Add Habit</button>
@@ -462,7 +522,9 @@ const PRINCIPLES = [
 
 /* ===== APP STATE ===== */
 let CU = null, habits = [], checkins = {}, logsCache = {};
-let selPrin = null, unsubH = null, unsubC = null, curPage = 'dashboard';
+let selPrin = null, unsubH = null, unsubC = null, curPage = 'tracker';
+let trackerEndOffset = 0; // 0 = today is rightmost column
+const TRACKER_DAYS = 14;
 
 /* ===== DATE HELPERS ===== */
 const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -529,10 +591,131 @@ function navigate(page){
   renderCurrent();
 }
 function renderCurrent(){
+  if(curPage==='tracker')    renderTracker();
   if(curPage==='dashboard')  renderDash();
   if(curPage==='habits')     renderHabits();
   if(curPage==='insights')   renderInsights();
   if(curPage==='principles') renderPrinciplesPage();
+}
+
+/* ===== TRACKER TABLE ===== */
+async function renderTracker(){
+  const zone = document.getElementById('tracker-zone');
+  const rangeLbl = document.getElementById('tracker-date-range');
+  if(!habits.length){
+    zone.innerHTML = `<div class="empty-state" style="padding:4rem 1.5rem"><div class="es-icon">📅</div><div class="es-title">No habits yet</div><div class="es-sub">Click "＋ Add Habit" above to start tracking</div></div>`;
+    if(rangeLbl) rangeLbl.textContent = 'Add your first habit to begin';
+    return;
+  }
+  const dates = [];
+  for(let i=TRACKER_DAYS-1; i>=0; i--) dates.push(daysAgo(trackerEndOffset + i));
+  const logs = {};
+  await Promise.all(dates.map(async d => { logs[d] = await getLog(d); }));
+  const td = today();
+  const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const thead = `<thead><tr><th class="habit-col">Habit</th>${dates.map(d=>{
+    const dd = new Date(d+'T00:00:00');
+    const isToday = d===td;
+    return `<th class="day-col${isToday?' today':''}" title="${d}"><span class="day-num">${dd.getDate()}</span><span class="day-dow">${DOW[dd.getDay()]}</span></th>`;
+  }).join('')}</tr></thead>`;
+  const tbody = `<tbody>${habits.map(h=>{
+    const typeIcon = h.type==='break'?'⛔':'🌱';
+    const cr = h.createdAt?.toDate ? h.createdAt.toDate() : new Date(0);
+    const crStr = fmtDate(cr);
+    return `<tr><td class="habit-cell">
+      <div class="h-name">${typeIcon} ${escHtml(h.name)}</div>
+      <div class="h-meta">
+        <span class="streak">🔥 ${h.currentStreak||0}</span>
+        <span>· ${h.totalCompletions||0} total</span>
+        <button class="h-del" onclick="event.stopPropagation();deleteHabit('${h.id}')" title="Delete habit">🗑</button>
+      </div>
+    </td>${dates.map(d=>{
+      const done = !!logs[d]?.[h.id]?.completed;
+      const isToday = d===td;
+      const isFuture = d > td;
+      const beforeCreation = d < crStr;
+      if(isFuture || beforeCreation) return `<td class="day-cell future"></td>`;
+      return `<td class="day-cell${done?' done':''}${isToday?' today':''}" onclick="toggleCell('${h.id}','${d}')" title="${d}"></td>`;
+    }).join('')}</tr>`;
+  }).join('')}</tbody>`;
+  zone.innerHTML = `<table class="tracker-table">${thead}${tbody}</table>`;
+  const first = new Date(dates[0]+'T00:00:00');
+  const last = new Date(dates[dates.length-1]+'T00:00:00');
+  const fmt = d => d.toLocaleDateString('en-SG',{month:'short',day:'numeric'});
+  if(rangeLbl) rangeLbl.textContent = `${fmt(first)} — ${fmt(last)} · Click any cell to toggle`;
+}
+
+function shiftTracker(days){
+  trackerEndOffset = Math.max(0, trackerEndOffset + days);
+  renderTracker();
+}
+function shiftTrackerToday(){
+  trackerEndOffset = 0;
+  renderTracker();
+}
+
+async function toggleCell(hid, date){
+  const h = habits.find(x=>x.id===hid); if(!h) return;
+  const td = today();
+  if(date > td) return;
+  const uid = CU.uid;
+  const lRef = db.collection('users').doc(uid).collection('logs').doc(date);
+  const currentLog = await getLog(date);
+  const currentlyDone = !!currentLog[hid]?.completed;
+  const newDone = !currentlyDone;
+  try {
+    await lRef.set({[hid]:{completed:newDone, completedAt:newDone?firebase.firestore.FieldValue.serverTimestamp():null}},{merge:true});
+    if(!logsCache[date]) logsCache[date] = {};
+    logsCache[date][hid] = {completed:newDone};
+    if(date===td){
+      if(!checkins) checkins={};
+      checkins[hid] = {completed:newDone};
+    }
+    await recalcHabitStats(hid);
+    if(newDone){
+      const updated = habits.find(x=>x.id===hid);
+      const ns = updated?.currentStreak || 0;
+      if(ns && (ns===7 || ns===30 || (ns>0 && ns%5===0))) triggerConfetti();
+      toast(`✓ "${h.name}" — ${date.slice(5)}`,'success');
+    } else {
+      toast(`"${h.name}" unchecked — ${date.slice(5)}`,'info');
+    }
+  } catch(e){
+    console.error(e);
+    toast('Error: '+e.message,'error');
+  }
+}
+
+async function recalcHabitStats(hid){
+  const h = habits.find(x=>x.id===hid); if(!h) return;
+  const uid = CU.uid;
+  const WINDOW = 180;
+  const dates = [];
+  for(let i=0; i<WINDOW; i++) dates.push(daysAgo(i));
+  const logs = await Promise.all(dates.map(d => getLog(d)));
+  const results = dates.map((ds, idx) => ({ds, done: !!logs[idx][hid]?.completed}));
+  // results[0] = today, results[WINDOW-1] = oldest
+  let total = 0;
+  for(const r of results) if(r.done) total++;
+  // longest streak in window (scan old→new)
+  let longestInWin = 0, run = 0;
+  for(let i=WINDOW-1; i>=0; i--){
+    if(results[i].done){ run++; if(run>longestInWin) longestInWin=run; }
+    else run = 0;
+  }
+  // current streak ending today (allow today unchecked so streak doesn't break until tomorrow)
+  let currentStreak = 0;
+  const startIdx = results[0].done ? 0 : 1;
+  for(let i=startIdx; i<WINDOW; i++){
+    if(results[i].done) currentStreak++;
+    else break;
+  }
+  const longestStreak = Math.max(longestInWin, h.longestStreak||0, currentStreak);
+  let lastCheckinDate = null;
+  for(const r of results){ if(r.done){ lastCheckinDate = r.ds; break; } }
+  await db.collection('users').doc(uid).collection('habits').doc(hid).update({
+    currentStreak, longestStreak, totalCompletions: total, lastCheckinDate
+  });
 }
 
 /* ===== DASHBOARD ===== */
@@ -831,7 +1014,7 @@ async function submitHabit(){
     });
     closeModal();
     toast(`"${name}" added!`,'success');
-    navigate('habits');
+    navigate('tracker');
   }catch(e){ console.error(e); toast('Failed to add habit: '+e.message,'error'); }
 }
 
@@ -914,10 +1097,11 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeModal();
   if(!CU) return;
   if(e.ctrlKey||e.metaKey){
-    if(e.key==='1'){e.preventDefault();navigate('dashboard');}
-    if(e.key==='2'){e.preventDefault();navigate('habits');}
-    if(e.key==='3'){e.preventDefault();navigate('principles');}
-    if(e.key==='4'){e.preventDefault();navigate('insights');}
+    if(e.key==='1'){e.preventDefault();navigate('tracker');}
+    if(e.key==='2'){e.preventDefault();navigate('dashboard');}
+    if(e.key==='3'){e.preventDefault();navigate('habits');}
+    if(e.key==='4'){e.preventDefault();navigate('principles');}
+    if(e.key==='5'){e.preventDefault();navigate('insights');}
     if(e.key==='n'){e.preventDefault();openModal();}
   }
 });
