@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Atomic Habits Tracker — Polymath</title>
+<title>Heat Habits — Burn Bright, Stay Hot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -12,27 +12,31 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#08080E;--bg2:#0F0F1A;--bg3:#161626;--surface:#1A1A2E;--surface2:#22223A;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --amber:#F59E0B;--amber-light:#FCD34D;--amber-dim:rgba(245,158,11,0.15);--amber-glow:rgba(245,158,11,0.35);
-  --green:#10B981;--green-dim:rgba(16,185,129,0.15);
-  --red:#EF4444;--red-dim:rgba(239,68,68,0.15);
-  --blue:#6366F1;--blue-dim:rgba(99,102,241,0.15);
-  --text:#F1F0ED;--text2:#A8A8B3;--text3:#5A5A72;
+  --bg:#0A0404;--bg2:#140707;--bg3:#1F0B0B;--surface:#2A1010;--surface2:#3B1614;
+  --border:rgba(255,107,26,0.08);--border2:rgba(255,107,26,0.18);
+  --amber:#FF6B1A;--amber-light:#FFB347;--amber-dim:rgba(255,107,26,0.15);--amber-glow:rgba(255,107,26,0.45);
+  --gold:#F9A01B;--gold-dim:rgba(249,160,27,0.15);
+  --heat-red:#E63946;--heat-red-dim:rgba(230,57,70,0.18);
+  --green:#22C55E;--green-dim:rgba(34,197,94,0.15);
+  --red:#E63946;--red-dim:rgba(230,57,70,0.15);
+  --blue:#F472B6;--blue-dim:rgba(244,114,182,0.15);
+  --text:#FFF5ED;--text2:#D4BFAD;--text3:#7A6458;
   --font-d:'Playfair Display',Georgia,serif;--font-b:'DM Sans',sans-serif;
   --r:12px;--rl:18px;--rxl:24px;
   --sidebar-w:260px;--tr:0.2s ease;
+  --grad-heat:linear-gradient(135deg,#FF6B1A 0%,#E63946 100%);
 }
 html{font-size:16px}
 body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 10%,rgba(245,158,11,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 90% 90%,rgba(99,102,241,.05) 0%,transparent 60%);pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 0%,rgba(255,107,26,.14) 0%,transparent 55%),radial-gradient(ellipse 60% 70% at 100% 100%,rgba(230,57,70,.10) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 50% 110%,rgba(249,160,27,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
 
 /* AUTH */
 #auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;position:relative;z-index:1;padding:2rem}
 .auth-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rxl);padding:3rem 2.5rem;max-width:420px;width:100%;text-align:center;box-shadow:0 8px 48px rgba(0,0,0,.6);animation:slideUp .5s ease}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.auth-logo{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;background:var(--amber-dim);border:1.5px solid var(--amber);border-radius:50%;font-size:1.75rem;margin-bottom:1.5rem}
+.auth-logo{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;background:var(--grad-heat);border:1.5px solid var(--amber-light);border-radius:50%;font-size:1.75rem;margin-bottom:1.5rem;box-shadow:0 0 24px var(--amber-glow);animation:flicker 2.5s ease-in-out infinite}
+@keyframes flicker{0%,100%{box-shadow:0 0 24px var(--amber-glow),0 0 0 var(--heat-red-dim)}50%{box-shadow:0 0 36px var(--amber-glow),0 0 12px var(--heat-red-dim)}}
 .auth-card h1{font-family:var(--font-d);font-size:2rem;font-weight:700;margin-bottom:.5rem}
 .auth-card .subtitle{font-size:.9rem;color:var(--text2);line-height:1.6;margin-bottom:2rem}
 .btn-google{display:flex;align-items:center;justify-content:center;gap:.75rem;width:100%;padding:.85rem 1.5rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:.95rem;font-weight:500;cursor:pointer;transition:all var(--tr)}
@@ -46,7 +50,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* SIDEBAR */
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;z-index:100;overflow-y:auto}
 .sidebar-logo{display:flex;align-items:center;gap:.65rem;padding:0 .5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.sidebar-logo .icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--amber-dim);border:1.5px solid var(--amber);border-radius:8px;font-size:1.1rem;flex-shrink:0}
+.sidebar-logo .icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--grad-heat);border:1.5px solid var(--amber-light);border-radius:8px;font-size:1.1rem;flex-shrink:0;box-shadow:0 0 14px var(--amber-glow)}
 .sidebar-logo .brand{font-family:var(--font-d);font-size:1.05rem;font-weight:700;line-height:1.1}
 .sidebar-logo .brand span{display:block;font-family:var(--font-b);font-size:.65rem;font-weight:400;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
 .nav-sec{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);padding:0 .5rem;margin-bottom:.5rem}
@@ -84,12 +88,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
 .chip-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,.3)}
 .chip-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.3)}
-.chip-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(99,102,241,.3)}
+.chip-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(244,114,182,.3)}
+.chip-heat{background:var(--grad-heat);color:#fff;border:1px solid rgba(255,179,71,.4);text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.chip-time{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(249,160,27,.35)}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.2rem;border-radius:var(--r);font-family:var(--font-b);font-size:.875rem;font-weight:500;cursor:pointer;transition:all var(--tr);border:none;outline:none;white-space:nowrap}
-.btn-primary{background:var(--amber);color:#000;font-weight:600}
-.btn-primary:hover{background:var(--amber-light);transform:translateY(-1px);box-shadow:0 4px 16px var(--amber-glow)}
+.btn-primary{background:var(--grad-heat);color:#fff;font-weight:600;box-shadow:0 0 0 1px rgba(255,179,71,.25) inset}
+.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px var(--amber-glow),0 0 0 1px rgba(255,179,71,.4) inset}
 .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
 .btn-secondary:hover{background:var(--bg3);border-color:var(--amber);color:var(--amber)}
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
@@ -176,15 +182,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .tracker-table td.habit-cell .h-meta .h-del:hover{color:var(--red);background:var(--red-dim)}
 .tracker-table td.day-cell{width:46px;min-width:46px;height:48px;cursor:pointer;background:var(--bg3);transition:all var(--tr);text-align:center;vertical-align:middle;color:transparent;font-size:1.1rem;font-weight:700}
 .tracker-table td.day-cell:hover{background:var(--surface2);transform:scale(0.94)}
-.tracker-table td.day-cell.done{background:var(--green);color:#fff}
-.tracker-table td.day-cell.done::after{content:'✓'}
-.tracker-table td.day-cell.done:hover{background:#0ea371}
+.tracker-table td.day-cell.done{background:var(--grad-heat);color:#fff;box-shadow:inset 0 0 12px rgba(255,179,71,.25)}
+.tracker-table td.day-cell.done::after{content:'🔥'}
+.tracker-table td.day-cell.done:hover{filter:brightness(1.15)}
 .tracker-table td.day-cell.today{box-shadow:inset 0 0 0 2px var(--amber)}
 .tracker-table td.day-cell.future{background:transparent;cursor:not-allowed;opacity:.2;pointer-events:none}
 .tracker-legend{display:flex;align-items:center;gap:1.25rem;margin-top:1rem;font-size:.75rem;color:var(--text3);flex-wrap:wrap}
 .tracker-legend .lg-item{display:flex;align-items:center;gap:.45rem}
 .tracker-legend .lg-swatch{width:16px;height:16px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)}
-.tracker-legend .lg-swatch.done{background:var(--green);border-color:var(--green)}
+.tracker-legend .lg-swatch.done{background:var(--grad-heat);border-color:var(--amber)}
 .tracker-legend .lg-swatch.today{box-shadow:inset 0 0 0 2px var(--amber);background:var(--bg3)}
 @media(max-width:700px){
   .tracker-table thead th.habit-col,.tracker-table td.habit-cell{min-width:180px}
@@ -209,16 +215,63 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .heatmap-grid{display:flex;flex-direction:column;gap:3px}
 .heatmap-row{display:flex;gap:3px}
 .hm-cell{width:18px;height:18px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)}
-.hm-cell.l1{background:rgba(16,185,129,.2);border-color:transparent}
-.hm-cell.l2{background:rgba(16,185,129,.45);border-color:transparent}
-.hm-cell.l3{background:rgba(16,185,129,.7);border-color:transparent}
-.hm-cell.l4{background:#10B981;border-color:transparent}
+.hm-cell.l1{background:rgba(255,107,26,.22);border-color:transparent}
+.hm-cell.l2{background:rgba(255,107,26,.5);border-color:transparent}
+.hm-cell.l3{background:rgba(255,107,26,.78);border-color:transparent}
+.hm-cell.l4{background:var(--grad-heat);border-color:transparent;box-shadow:0 0 6px var(--amber-glow)}
 .bcr{display:flex;align-items:center;gap:.85rem;margin-bottom:.65rem}
 .bcr-lbl{font-size:.8rem;color:var(--text2);width:120px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bcr-track{flex:1;height:8px;background:var(--bg3);border-radius:99px;overflow:hidden}
-.bcr-fill{height:100%;background:var(--amber);border-radius:99px;transition:width .8s ease}
-.bcr-fill.green{background:var(--green)}
+.bcr-fill{height:100%;background:var(--grad-heat);border-radius:99px;transition:width .8s ease}
+.bcr-fill.green{background:linear-gradient(90deg,#22C55E,#10B981)}
 .bcr-pct{font-size:.78rem;color:var(--text2);width:38px;text-align:right;flex-shrink:0}
+
+/* SLEEP PAGE */
+.sleep-hero{background:var(--grad-heat);border-radius:var(--rxl);padding:1.75rem;color:#fff;margin-bottom:1.25rem;position:relative;overflow:hidden;box-shadow:0 8px 32px var(--amber-glow)}
+.sleep-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(255,255,255,.18),transparent 60%);pointer-events:none}
+.sleep-hero h3{font-family:var(--font-d);font-size:1.4rem;font-weight:700;margin-bottom:.25rem;position:relative}
+.sleep-hero p{font-size:.85rem;opacity:.85;position:relative}
+.sleep-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;margin-top:1.25rem;position:relative}
+.sleep-form label{display:block;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.sleep-form input{width:100%;padding:.6rem .85rem;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.25);border-radius:var(--r);color:#fff;font-family:var(--font-b);font-size:.88rem;outline:none}
+.sleep-form input::-webkit-calendar-picker-indicator{filter:invert(1) opacity(.8)}
+.sleep-form input:focus{border-color:#fff}
+.sleep-form .btn-save{align-self:end;padding:.6rem 1.1rem;background:rgba(0,0,0,.35);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:var(--r);font-weight:600;cursor:pointer;transition:all var(--tr);font-family:var(--font-b);font-size:.85rem}
+.sleep-form .btn-save:hover{background:rgba(0,0,0,.5);border-color:#fff}
+.sleep-live{display:flex;align-items:center;gap:1.25rem;margin-top:1rem;padding:.85rem 1rem;background:rgba(0,0,0,.25);border-radius:var(--r);position:relative;flex-wrap:wrap}
+.sleep-live-item{display:flex;flex-direction:column;gap:2px}
+.sleep-live-k{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.75}
+.sleep-live-v{font-family:var(--font-d);font-size:1.1rem;font-weight:700}
+.sleep-history-row{display:grid;grid-template-columns:90px 1fr 80px 80px 90px;gap:.75rem;align-items:center;padding:.7rem .9rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:.5rem;font-size:.82rem}
+.sleep-history-row.head{background:transparent;border:none;padding:.35rem .9rem;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:0}
+.sleep-history-row .date{color:var(--text2);font-weight:600}
+.sleep-history-row .hrs{font-family:var(--font-d);font-weight:700;color:var(--amber-light);text-align:right}
+.sleep-bar{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.sleep-bar-fill{height:100%;background:var(--grad-heat);border-radius:99px;transition:width .4s ease}
+.sleep-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem}
+@media(max-width:780px){.sleep-form{grid-template-columns:1fr 1fr}.sleep-form .btn-save{grid-column:1 / -1}.sleep-stat-grid{grid-template-columns:1fr 1fr}.sleep-history-row{grid-template-columns:80px 1fr 70px}
+.sleep-history-row .bed,.sleep-history-row .wake{display:none}}
+
+/* TIMING WIDGET */
+.timing-toggle{display:flex;align-items:center;gap:.6rem;padding:.75rem .95rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;user-select:none;transition:all var(--tr)}
+.timing-toggle:hover{border-color:var(--amber)}
+.timing-toggle input[type=checkbox]{width:18px;height:18px;accent-color:var(--amber);cursor:pointer}
+.timing-toggle .lbl{font-size:.85rem;font-weight:500;color:var(--text)}
+.timing-toggle .sub{font-size:.72rem;color:var(--text3);margin-top:2px}
+#timing-fields{display:none;margin-top:.75rem}
+#timing-fields.visible{display:block}
+.hours-row{display:flex;align-items:center;gap:.5rem;background:var(--bg3);padding:.75rem 1rem;border-radius:var(--r);border:1px solid var(--border)}
+.hours-row input{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--font-d);font-size:1.15rem;font-weight:700;outline:none;max-width:60px;text-align:center}
+.hours-row .unit{font-size:.82rem;color:var(--text2)}
+.hours-row .bump{background:var(--surface2);border:1px solid var(--border2);color:var(--text);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+.hours-row .bump:hover{border-color:var(--amber);color:var(--amber)}
+.timing-preview{font-size:.72rem;color:var(--text3);margin-top:.4rem;font-style:italic}
+
+/* TIMING BADGE ON HABIT CELLS */
+.h-timing{display:inline-flex;align-items:center;gap:3px;font-size:.68rem;color:var(--gold);background:var(--gold-dim);padding:1px 6px;border-radius:99px;border:1px solid rgba(249,160,27,.25);font-weight:600}
+.h-timing.due{background:var(--grad-heat);color:#fff;border-color:rgba(255,179,71,.4);box-shadow:0 0 8px var(--amber-glow);animation:pulseDue 2s ease-in-out infinite}
+@keyframes pulseDue{0%,100%{box-shadow:0 0 6px var(--amber-glow)}50%{box-shadow:0 0 14px var(--amber-glow)}}
+.hci.due{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber-glow)}
 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
@@ -270,8 +323,8 @@ textarea.form-input{resize:vertical;min-height:72px}
 .es-icon{font-size:2.5rem;margin-bottom:.75rem}
 .es-title{font-size:1rem;color:var(--text2);font-weight:500;margin-bottom:.4rem}
 .es-sub{font-size:.85rem}
-.fab{position:fixed;bottom:2rem;right:2rem;display:flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;background:var(--amber);color:#000;font-family:var(--font-b);font-size:.88rem;font-weight:700;border:none;border-radius:99px;cursor:pointer;box-shadow:0 4px 20px var(--amber-glow);transition:all var(--tr);z-index:50}
-.fab:hover{background:var(--amber-light);transform:translateY(-2px);box-shadow:0 6px 28px var(--amber-glow)}
+.fab{position:fixed;bottom:2rem;right:2rem;display:flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;background:var(--grad-heat);color:#fff;font-family:var(--font-b);font-size:.88rem;font-weight:700;border:none;border-radius:99px;cursor:pointer;box-shadow:0 4px 20px var(--amber-glow);transition:all var(--tr);z-index:50}
+.fab:hover{filter:brightness(1.12);transform:translateY(-2px);box-shadow:0 6px 28px var(--amber-glow)}
 .fb{display:flex;align-items:center;justify-content:space-between}
 .fg{display:flex;align-items:center;gap:.5rem}
 .divider{height:1px;background:var(--border);margin:1.25rem 0}
@@ -288,9 +341,9 @@ textarea.form-input{resize:vertical;min-height:72px}
 
 <div id="auth-screen">
   <div class="auth-card">
-    <div class="auth-logo">⚛️</div>
-    <h1>Atomic Habits</h1>
-    <p class="subtitle">Track your habits using James Clear's 10 proven principles.<br/>Tiny changes. Remarkable results.</p>
+    <div class="auth-logo">🔥</div>
+    <h1>Heat Habits</h1>
+    <p class="subtitle">Burn bright, stay hot. Track your habits with James Clear's 10 proven principles<br/>and tune them to your own rhythm.</p>
     <button class="btn-google" id="btn-glogin">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -307,13 +360,14 @@ textarea.form-input{resize:vertical;min-height:72px}
 <div id="app-shell">
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="icon">⚛️</div>
-      <div class="brand">Atomic Habits<span>Polymath Tracker</span></div>
+      <div class="icon">🔥</div>
+      <div class="brand">Heat Habits<span>Burn Bright Tracker</span></div>
     </div>
     <div class="nav-sec">Navigation</div>
     <button class="nav-btn active" data-page="tracker" onclick="navigate('tracker')"><span class="ni">📅</span>Tracker</button>
     <button class="nav-btn" data-page="dashboard" onclick="navigate('dashboard')"><span class="ni">🏠</span>Dashboard</button>
     <button class="nav-btn" data-page="habits" onclick="navigate('habits')"><span class="ni">✅</span>My Habits<span class="badge" id="hbadge" style="display:none">0</span></button>
+    <button class="nav-btn" data-page="sleep" onclick="navigate('sleep')"><span class="ni">🌙</span>Sleep</button>
     <button class="nav-btn" data-page="principles" onclick="navigate('principles')"><span class="ni">📖</span>10 Principles</button>
     <button class="nav-btn" data-page="insights" onclick="navigate('insights')"><span class="ni">📊</span>Insights</button>
     <div class="sidebar-bottom">
@@ -330,11 +384,11 @@ textarea.form-input{resize:vertical;min-height:72px}
     <!-- TRACKER -->
     <div class="page active" id="page-tracker">
       <div class="page-header fb">
-        <div><h2>Habit Tracker</h2><p id="tracker-date-range">Tap any cell to toggle that day</p></div>
+        <div><h2>Habit Tracker 🔥</h2><p id="tracker-date-range">Tap any cell to toggle that day</p></div>
         <div class="tracker-controls">
-          <button class="btn btn-ghost btn-sm" onclick="shiftTracker(-7)" title="Previous week">◀ Prev</button>
-          <button class="btn btn-ghost btn-sm" onclick="shiftTrackerToday()" title="Jump to today">Today</button>
-          <button class="btn btn-ghost btn-sm" onclick="shiftTracker(7)" title="Next week">Next ▶</button>
+          <button class="btn btn-ghost btn-sm" onclick="shiftMonth(-1)" title="Previous month">◀ Prev</button>
+          <button class="btn btn-ghost btn-sm" onclick="shiftMonthToday()" title="Jump to this month">This Month</button>
+          <button class="btn btn-ghost btn-sm" onclick="shiftMonth(1)" title="Next month">Next ▶</button>
           <button class="btn btn-primary" onclick="openModal()">＋ Add Habit</button>
         </div>
       </div>
@@ -361,7 +415,13 @@ textarea.form-input{resize:vertical;min-height:72px}
             <div class="ring-wrap">
               <svg width="80" height="80" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
-                <circle id="ring-c" cx="40" cy="40" r="32" fill="none" stroke="#F59E0B" stroke-width="7" stroke-linecap="round" stroke-dasharray="201.06" stroke-dashoffset="201.06" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset .8s ease"/>
+                <defs>
+                  <linearGradient id="heat-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FF6B1A"/>
+                    <stop offset="100%" stop-color="#E63946"/>
+                  </linearGradient>
+                </defs>
+                <circle id="ring-c" cx="40" cy="40" r="32" fill="none" stroke="url(#heat-ring-grad)" stroke-width="7" stroke-linecap="round" stroke-dasharray="201.06" stroke-dashoffset="201.06" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset .8s ease"/>
               </svg>
               <div class="ring-text"><div class="ring-pct" id="ring-pct">0%</div><div class="ring-lbl">done</div></div>
             </div>
@@ -398,6 +458,57 @@ textarea.form-input{resize:vertical;min-height:72px}
       <div class="grid-2" id="prin-grid"></div>
     </div>
 
+    <!-- SLEEP -->
+    <div class="page" id="page-sleep">
+      <div class="page-header">
+        <h2>Sleep Tracker 🌙</h2>
+        <p>Log your wake-up and bedtime each day. Your habits reorder themselves around your wake time.</p>
+      </div>
+      <div class="sleep-hero">
+        <h3 id="sleep-hero-title">Today</h3>
+        <p id="sleep-hero-sub">Set your wake time to unlock timing-based habit reordering.</p>
+        <div class="sleep-form">
+          <div>
+            <label>Woke up at</label>
+            <input type="time" id="sleep-wake"/>
+          </div>
+          <div>
+            <label>Went to bed at</label>
+            <input type="time" id="sleep-bed"/>
+          </div>
+          <div>
+            <label>Bedtime was on</label>
+            <select id="sleep-bed-day" class="form-input" style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.25);color:#fff;padding:.6rem .85rem">
+              <option value="prev">Previous night</option>
+              <option value="same">Same day (nap/late)</option>
+            </select>
+          </div>
+          <button class="btn-save" onclick="saveSleep()">Save</button>
+        </div>
+        <div class="sleep-live">
+          <div class="sleep-live-item"><div class="sleep-live-k">Slept</div><div class="sleep-live-v" id="sleep-live-hrs">—</div></div>
+          <div class="sleep-live-item"><div class="sleep-live-k">Hours since wake</div><div class="sleep-live-v" id="sleep-live-since">—</div></div>
+          <div class="sleep-live-item"><div class="sleep-live-k">Wake streak</div><div class="sleep-live-v" id="sleep-live-streak">0 days</div></div>
+        </div>
+      </div>
+      <div class="sleep-stat-grid">
+        <div class="stat-card"><div class="stat-icon amber">😴</div><div><div class="stat-val" id="sleep-avg">0h</div><div class="stat-ttl">7-day avg sleep</div></div></div>
+        <div class="stat-card"><div class="stat-icon blue">🌅</div><div><div class="stat-val" id="sleep-avg-wake">—</div><div class="stat-ttl">Avg wake time</div></div></div>
+        <div class="stat-card"><div class="stat-icon green">🌙</div><div><div class="stat-val" id="sleep-avg-bed">—</div><div class="stat-ttl">Avg bedtime</div></div></div>
+        <div class="stat-card"><div class="stat-icon red">⏱️</div><div><div class="stat-val" id="sleep-total">0h</div><div class="stat-ttl">Total hours (30d)</div></div></div>
+      </div>
+      <div class="card">
+        <div class="fb mb-2">
+          <div class="font-d fw-7" style="font-size:1.05rem">Sleep History — Last 14 Days</div>
+          <div class="text-xs text-muted">Bar fills scale to 10 hours</div>
+        </div>
+        <div class="sleep-history-row head">
+          <div>Date</div><div>Sleep duration</div><div class="bed">Bed</div><div class="wake">Wake</div><div style="text-align:right">Hours</div>
+        </div>
+        <div id="sleep-history"><div class="spinner"></div></div>
+      </div>
+    </div>
+
     <!-- INSIGHTS -->
     <div class="page" id="page-insights">
       <div class="page-header"><h2>Insights</h2><p>Your habit data visualised over the last 30 days</p></div>
@@ -406,7 +517,7 @@ textarea.form-input{resize:vertical;min-height:72px}
           <div class="font-d fw-7 mb-1" style="font-size:1rem">30-Day Activity Heatmap</div>
           <div class="text-xs text-muted mb-2">Each cell = one day. Darker green = more habits completed.</div>
           <div id="heatmap-zone"><div class="spinner"></div></div>
-          <div class="fg mt-2 text-xs text-muted"><span>Less</span><div style="width:12px;height:12px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)"></div><div style="width:12px;height:12px;border-radius:3px;background:rgba(16,185,129,.2)"></div><div style="width:12px;height:12px;border-radius:3px;background:rgba(16,185,129,.5)"></div><div style="width:12px;height:12px;border-radius:3px;background:#10B981"></div><span>More</span></div>
+          <div class="fg mt-2 text-xs text-muted"><span>Cold</span><div style="width:12px;height:12px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)"></div><div style="width:12px;height:12px;border-radius:3px;background:rgba(255,107,26,.22)"></div><div style="width:12px;height:12px;border-radius:3px;background:rgba(255,107,26,.5)"></div><div style="width:12px;height:12px;border-radius:3px;background:var(--grad-heat)"></div><span>Hot 🔥</span></div>
         </div>
         <div class="card"><div class="font-d fw-7 mb-2" style="font-size:1rem">🏆 Top Streaks</div><div id="top-streaks"></div></div>
       </div>
@@ -451,6 +562,26 @@ textarea.form-input{resize:vertical;min-height:72px}
       <div class="form-group">
         <label class="form-label">Identity Statement <span style="color:var(--text3);font-weight:400;text-transform:none">(Principle #10 — optional)</span></label>
         <input id="m-identity" class="form-input" type="text" placeholder='"I am someone who reads every day."'/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Timing <span style="color:var(--text3);font-weight:400;text-transform:none">(optional)</span></label>
+        <label class="timing-toggle" for="m-use-timing">
+          <input type="checkbox" id="m-use-timing" onchange="toggleTimingFields()"/>
+          <div>
+            <div class="lbl">Schedule by hours after waking</div>
+            <div class="sub">Sequence adapts to your wake time — perfect if your schedule shifts daily.</div>
+          </div>
+        </label>
+        <div id="timing-fields">
+          <div class="mt-1"></div>
+          <div class="hours-row">
+            <button type="button" class="bump" onclick="bumpHours(-0.5)">−</button>
+            <input type="number" id="m-hours" min="0" max="24" step="0.5" value="1" oninput="updateTimingPreview()"/>
+            <span class="unit">hours after waking</span>
+            <button type="button" class="bump" onclick="bumpHours(0.5)" style="margin-left:auto">+</button>
+          </div>
+          <div class="timing-preview" id="m-timing-preview">e.g. if you wake at 07:00, this runs around 08:00.</div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -521,10 +652,13 @@ const PRINCIPLES = [
 ];
 
 /* ===== APP STATE ===== */
-let CU = null, habits = [], checkins = {}, logsCache = {};
-let selPrin = null, unsubH = null, unsubC = null, curPage = 'tracker';
-let trackerEndOffset = 0; // 0 = today is rightmost column
-const TRACKER_DAYS = 14;
+let CU = null, habits = [], checkins = {}, logsCache = {}, sleepCache = {};
+let selPrin = null, unsubH = null, unsubC = null, unsubS = null, curPage = 'tracker';
+const _now = new Date();
+let trackerYear  = _now.getFullYear();
+let trackerMonth = _now.getMonth(); // 0-indexed
+let todaySleep   = null; // {wakeTime, bedTime, bedTimeDate}
+let _timingTicker = null;
 
 /* ===== DATE HELPERS ===== */
 const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -537,11 +671,12 @@ document.getElementById('btn-glogin').onclick = () => {
   auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast('Sign-in failed: '+e.message,'error'));
 };
 function doSignOut(){
-  if(unsubH) unsubH(); if(unsubC) unsubC();
+  if(unsubH) unsubH(); if(unsubC) unsubC(); if(unsubS) unsubS();
+  if(_timingTicker){ clearInterval(_timingTicker); _timingTicker=null; }
   auth.signOut().then(()=>{
     document.getElementById('app-shell').classList.remove('visible');
     document.getElementById('auth-screen').style.display='flex';
-    habits=[]; checkins={}; logsCache={};
+    habits=[]; checkins={}; logsCache={}; sleepCache={}; todaySleep=null;
   });
 }
 auth.onAuthStateChanged(u=>{
@@ -590,6 +725,18 @@ function subscribe(){
   unsubC = db.collection('users').doc(uid).collection('logs').doc(td)
     .onSnapshot(snap=>{ checkins=snap.exists?(snap.data()||{}):{}; renderCurrent(); },
       e=>{ console.error('logs listener error:',e); toast('Error loading logs: '+(e.message||e.code||e),'error'); });
+  unsubS = db.collection('users').doc(uid).collection('sleep').doc(td)
+    .onSnapshot(snap=>{
+      todaySleep = snap.exists ? (snap.data()||{}) : null;
+      sleepCache[td] = todaySleep || {};
+      renderCurrent();
+    }, e=>{ console.error('sleep listener error:',e); });
+  // Tick every minute so "due now" highlights refresh without the user navigating
+  if(_timingTicker) clearInterval(_timingTicker);
+  _timingTicker = setInterval(()=>{
+    if(!todaySleep?.wakeTime) return;
+    if(curPage==='dashboard' || curPage==='tracker' || curPage==='sleep') renderCurrent();
+  }, 60*1000);
 }
 
 /* ===== NAVIGATION ===== */
@@ -603,11 +750,15 @@ function renderCurrent(){
   if(curPage==='tracker')    renderTracker();
   if(curPage==='dashboard')  renderDash();
   if(curPage==='habits')     renderHabits();
+  if(curPage==='sleep')      renderSleepPage();
   if(curPage==='insights')   renderInsights();
   if(curPage==='principles') renderPrinciplesPage();
 }
 
 /* ===== TRACKER TABLE ===== */
+function monthName(y,m){ return new Date(y,m,1).toLocaleDateString('en-SG',{month:'long',year:'numeric'}); }
+function daysInMonth(y,m){ return new Date(y,m+1,0).getDate(); }
+
 async function renderTracker(){
   const zone = document.getElementById('tracker-zone');
   const rangeLbl = document.getElementById('tracker-date-range');
@@ -616,23 +767,29 @@ async function renderTracker(){
     if(rangeLbl) rangeLbl.textContent = 'Add your first habit to begin';
     return;
   }
+  const n = daysInMonth(trackerYear, trackerMonth);
   const dates = [];
-  for(let i=TRACKER_DAYS-1; i>=0; i--) dates.push(daysAgo(trackerEndOffset + i));
+  for(let d=1; d<=n; d++){
+    const dt = new Date(trackerYear, trackerMonth, d);
+    dates.push(fmtDate(dt));
+  }
   const logs = {};
   await Promise.all(dates.map(async d => { logs[d] = await getLog(d); }));
   const td = today();
   const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const sorted = sortHabitsForDisplay(habits);
   const thead = `<thead><tr><th class="habit-col">Habit</th>${dates.map(d=>{
     const dd = new Date(d+'T00:00:00');
     const isToday = d===td;
     return `<th class="day-col${isToday?' today':''}" title="${d}"><span class="day-num">${dd.getDate()}</span><span class="day-dow">${DOW[dd.getDay()]}</span></th>`;
   }).join('')}</tr></thead>`;
-  const tbody = `<tbody>${habits.map(h=>{
+  const tbody = `<tbody>${sorted.map(h=>{
     const typeIcon = h.type==='break'?'⛔':'🌱';
     const cr = h.createdAt?.toDate ? h.createdAt.toDate() : new Date(0);
     const crStr = fmtDate(cr);
+    const timingHtml = h.useTiming ? `<span class="h-timing${isHabitDueNow(h)?' due':''}" title="Scheduled ${h.hoursAfterWake}h after wake">⏱ +${h.hoursAfterWake}h</span>` : '';
     return `<tr><td class="habit-cell">
-      <div class="h-name">${typeIcon} ${escHtml(h.name)}</div>
+      <div class="h-name">${typeIcon} ${escHtml(h.name)} ${timingHtml}</div>
       <div class="h-meta">
         <span class="streak">🔥 ${h.currentStreak||0}</span>
         <span>· ${h.totalCompletions||0} total</span>
@@ -648,18 +805,24 @@ async function renderTracker(){
     }).join('')}</tr>`;
   }).join('')}</tbody>`;
   zone.innerHTML = `<table class="tracker-table">${thead}${tbody}</table>`;
-  const first = new Date(dates[0]+'T00:00:00');
-  const last = new Date(dates[dates.length-1]+'T00:00:00');
-  const fmt = d => d.toLocaleDateString('en-SG',{month:'short',day:'numeric'});
-  if(rangeLbl) rangeLbl.textContent = `${fmt(first)} — ${fmt(last)} · Click any cell to toggle`;
+  if(rangeLbl) rangeLbl.textContent = `${monthName(trackerYear, trackerMonth)} · ${n} days · Click any cell to toggle`;
+  // Auto-scroll to reveal today if viewing current month
+  if(trackerYear===new Date().getFullYear() && trackerMonth===new Date().getMonth()){
+    const todayCell = zone.querySelector('.day-cell.today');
+    if(todayCell) todayCell.scrollIntoView({inline:'center',block:'nearest'});
+  }
 }
 
-function shiftTracker(days){
-  trackerEndOffset = Math.max(0, trackerEndOffset + days);
+function shiftMonth(delta){
+  const d = new Date(trackerYear, trackerMonth+delta, 1);
+  trackerYear = d.getFullYear();
+  trackerMonth = d.getMonth();
   renderTracker();
 }
-function shiftTrackerToday(){
-  trackerEndOffset = 0;
+function shiftMonthToday(){
+  const d = new Date();
+  trackerYear = d.getFullYear();
+  trackerMonth = d.getMonth();
   renderTracker();
 }
 
@@ -751,13 +914,32 @@ function renderChecklist(){
   const done=habits.filter(h=>checkins[h.id]?.completed).length, tot=habits.length;
   updateRing(done,tot);
   document.getElementById('dash-count').textContent=`${done} of ${tot} habit${tot!==1?'s':''} done`;
-  ct.innerHTML=habits.map(h=>{
+  const sorted = sortHabitsForDisplay(habits);
+  const hsw = hoursSinceWake();
+  const wakeBanner = (hsw!=null)
+    ? `<div class="text-xs text-muted mb-1" style="padding:.4rem .5rem">🌅 Ordered from your wake time · ${fmtHours(hsw)} since wake</div>`
+    : '';
+  ct.innerHTML = wakeBanner + sorted.map(h=>{
     const ok=!!checkins[h.id]?.completed, p=PRINCIPLES.find(pr=>pr.id===h.principleId);
-    return `<div class="hci ${ok?'done':''}" onclick="toggleCheckin('${h.id}')">
+    const due = !ok && isHabitDueNow(h);
+    let subParts = [];
+    if(p) subParts.push(p.short.replace('\n',' '));
+    if(h.useTiming && h.hoursAfterWake!=null){
+      if(hsw!=null){
+        const delta = h.hoursAfterWake - hsw;
+        if(Math.abs(delta) <= 0.5) subParts.push('⏱ due now');
+        else if(delta > 0)         subParts.push(`⏱ in ${fmtHours(delta)}`);
+        else                       subParts.push(`⏱ ${fmtHours(-delta)} ago`);
+      } else {
+        subParts.push(`⏱ +${h.hoursAfterWake}h after wake`);
+      }
+    }
+    subParts.push(`Streak: ${h.currentStreak||0}🔥`);
+    return `<div class="hci ${ok?'done':''}${due?' due':''}" onclick="toggleCheckin('${h.id}')">
       <div class="checkmark ${ok?'checked':''}">${ok?'✓':''}</div>
       <div style="flex:1;min-width:0">
-        <div class="hci-name">${escHtml(h.name)}</div>
-        <div class="hci-sub">${p?(p.short.replace('\n',' ')):'?'} · Streak: ${h.currentStreak||0}🔥</div>
+        <div class="hci-name">${escHtml(h.name)}${due?' <span class="chip chip-heat" style="margin-left:.4rem">Due</span>':''}</div>
+        <div class="hci-sub">${subParts.join(' · ')}</div>
       </div>
       ${h.type==='break'?'<span class="chip chip-red">Break</span>':''}
     </div>`;
@@ -796,9 +978,10 @@ async function getLog(ds){
 
 function updateRing(done,tot){
   const pct=tot===0?0:Math.round((done/tot)*100), circ=201.06;
-  document.getElementById('ring-c').style.strokeDashoffset = circ-(pct/100)*circ;
+  const ring = document.getElementById('ring-c');
+  ring.style.strokeDashoffset = circ-(pct/100)*circ;
   document.getElementById('ring-pct').textContent = pct+'%';
-  document.getElementById('ring-c').style.stroke = pct===100?'var(--green)':'var(--amber)';
+  ring.style.stroke = pct===100 ? 'var(--green)' : 'url(#heat-ring-grad)';
 }
 
 function renderQuickLaws(){
@@ -817,8 +1000,9 @@ function renderHabits(){
     ct.innerHTML=`<div class="empty-state"><div class="es-icon">✅</div><div class="es-title">No habits added yet</div><div class="es-sub">Click "+ Add Habit" to get started</div></div>`;
     return;
   }
-  ct.innerHTML=habits.map(h=>habitCard(h)).join('');
-  habits.forEach(h=>loadCalendar(h.id));
+  const sorted=sortHabitsForDisplay(habits);
+  ct.innerHTML=sorted.map(h=>habitCard(h)).join('');
+  sorted.forEach(h=>loadCalendar(h.id));
 }
 
 function habitCard(h){
@@ -837,6 +1021,9 @@ function habitCard(h){
   if(h.identityStatement) dItems.push({k:'Identity',v:h.identityStatement});
   const detHtml=dItems.length?`<div class="hdl">${dItems.map(di=>`<div class="hdl-item"><div class="hdl-key">${escHtml(di.k)}</div><div class="hdl-val">${escHtml(di.v)}</div></div>`).join('')}</div>`:'';
 
+  const timingChip = h.useTiming && h.hoursAfterWake!=null
+    ? `<span class="chip chip-time">⏱ +${h.hoursAfterWake}h after wake</span>` : '';
+  const dueChip = isHabitDueNow(h) && !ok ? '<span class="chip chip-heat">🔥 Due now</span>' : '';
   return `<div class="hfc" id="hfc-${h.id}">
     <div class="hfc-header">
       <div style="flex:1">
@@ -844,6 +1031,8 @@ function habitCard(h){
         <div class="hfc-meta">
           <span class="chip ${h.type==='break'?'chip-red':'chip-green'}">${h.type==='break'?'⛔ Break':'🌱 Build'}</span>
           <span class="chip chip-amber">#${p.id||'?'} ${(p.short||'').replace('\n',' ')}</span>
+          ${timingChip}
+          ${dueChip}
           ${ok?'<span class="chip chip-green">✓ Done Today</span>':''}
         </div>
       </div>
@@ -968,6 +1157,186 @@ async function renderCompBars(){
     </div>`).join('');
 }
 
+/* ===== SLEEP & TIMING ===== */
+// Parse "HH:MM" into minutes since midnight
+function parseTime(t){
+  if(!t || typeof t!=='string') return null;
+  const [h,m]=t.split(':').map(n=>parseInt(n,10));
+  if(isNaN(h)||isNaN(m)) return null;
+  return h*60+m;
+}
+function fmtHours(h){
+  if(h==null||isNaN(h)) return '—';
+  const sign=h<0?'-':''; h=Math.abs(h);
+  const hh=Math.floor(h), mm=Math.round((h-hh)*60);
+  return `${sign}${hh}h ${String(mm).padStart(2,'0')}m`;
+}
+function fmt12(t){
+  if(!t) return '—';
+  const [h,m]=t.split(':').map(n=>parseInt(n,10));
+  const ap=h>=12?'PM':'AM', hh=((h+11)%12)+1;
+  return `${hh}:${String(m).padStart(2,'0')} ${ap}`;
+}
+
+// Returns hours slept given stored sleep record.
+// bedTimeDate = 'prev' (bed was night before this wake date) or 'same'
+function sleepHours(rec){
+  if(!rec || !rec.wakeTime || !rec.bedTime) return null;
+  const w = parseTime(rec.wakeTime);
+  const b = parseTime(rec.bedTime);
+  if(w==null||b==null) return null;
+  // If bed was previous night, compute from (b) yesterday to (w) today
+  // That equals (24*60 - b) + w, in minutes
+  let mins;
+  if(rec.bedTimeDate==='same'){
+    mins = w - b;
+    if(mins<0) mins += 24*60;
+  } else {
+    mins = (24*60 - b) + w;
+    if(mins>24*60) mins -= 24*60;
+  }
+  return mins/60;
+}
+
+// Current hours-since-wake for today (null if no wake set)
+function hoursSinceWake(){
+  if(!todaySleep?.wakeTime) return null;
+  const w = parseTime(todaySleep.wakeTime);
+  const now = new Date();
+  const nowMins = now.getHours()*60+now.getMinutes();
+  let diff = nowMins - w;
+  if(diff<0) diff += 24*60; // wake was later than now (edge case)
+  return diff/60;
+}
+
+// Is this habit currently "due" (within ±30 min of its scheduled time)?
+function isHabitDueNow(h){
+  if(!h.useTiming || h.hoursAfterWake==null) return false;
+  const hsw = hoursSinceWake();
+  if(hsw==null) return false;
+  return Math.abs(hsw - h.hoursAfterWake) <= 0.5;
+}
+
+// Sort habits: if any have timing AND user set a wake time, put timed habits
+// in chronological order (closest-to-now first), untimed habits after.
+// Otherwise keep creation order.
+function sortHabitsForDisplay(list){
+  if(!list || list.length<2) return list;
+  const hsw = hoursSinceWake();
+  const hasAnyTiming = list.some(h=>h.useTiming);
+  if(!hasAnyTiming || hsw==null) return list;
+  const timed = list.filter(h=>h.useTiming && h.hoursAfterWake!=null);
+  const untimed = list.filter(h=>!h.useTiming || h.hoursAfterWake==null);
+  // Habits that are upcoming come first (closest in the future), then the
+  // ones already past. Overdue (still incomplete) habits float up too.
+  timed.sort((a,b)=>{
+    const da = a.hoursAfterWake - hsw;
+    const db = b.hoursAfterWake - hsw;
+    const aUpcoming = da >= -0.5; // treat "just passed" as still upcoming
+    const bUpcoming = db >= -0.5;
+    if(aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+    if(aUpcoming) return da - db; // soonest first
+    return db - da; // most recently passed first
+  });
+  return [...timed, ...untimed];
+}
+
+// Save today's sleep entry
+async function saveSleep(){
+  if(!CU) return;
+  const td = today();
+  const wake = document.getElementById('sleep-wake').value;
+  const bed  = document.getElementById('sleep-bed').value;
+  const bedDay = document.getElementById('sleep-bed-day').value;
+  if(!wake && !bed){ toast('Enter at least one time.','warning'); return; }
+  try{
+    await db.collection('users').doc(CU.uid).collection('sleep').doc(td).set({
+      wakeTime: wake || null,
+      bedTime:  bed  || null,
+      bedTimeDate: bedDay || 'prev',
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+    toast('Sleep saved 🌙','success');
+  }catch(e){ console.error(e); toast('Failed to save sleep: '+e.message,'error'); }
+}
+
+async function getSleep(ds){
+  if(sleepCache[ds]!==undefined) return sleepCache[ds];
+  if(ds===today()){ sleepCache[ds]=todaySleep||{}; return sleepCache[ds]; }
+  try{
+    const s=await db.collection('users').doc(CU.uid).collection('sleep').doc(ds).get();
+    sleepCache[ds]=s.exists?(s.data()||{}):{};
+    return sleepCache[ds];
+  }catch(e){ return {}; }
+}
+
+async function renderSleepPage(){
+  // Pre-fill today's inputs if not focused
+  const wIn = document.getElementById('sleep-wake');
+  const bIn = document.getElementById('sleep-bed');
+  const dIn = document.getElementById('sleep-bed-day');
+  if(wIn && document.activeElement!==wIn) wIn.value = todaySleep?.wakeTime || '';
+  if(bIn && document.activeElement!==bIn) bIn.value = todaySleep?.bedTime  || '';
+  if(dIn) dIn.value = todaySleep?.bedTimeDate || 'prev';
+
+  document.getElementById('sleep-hero-title').textContent =
+    new Date().toLocaleDateString('en-SG',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('sleep-hero-sub').textContent =
+    todaySleep?.wakeTime
+      ? `You woke up at ${fmt12(todaySleep.wakeTime)}. Your habits are ordered from that anchor.`
+      : 'Set your wake time to unlock timing-based habit reordering.';
+
+  const hrs = sleepHours(todaySleep||{});
+  document.getElementById('sleep-live-hrs').textContent = hrs!=null ? fmtHours(hrs) : '—';
+  const hsw = hoursSinceWake();
+  document.getElementById('sleep-live-since').textContent = hsw!=null ? fmtHours(hsw) : '—';
+
+  // Load last 30 days of sleep history
+  const ct = document.getElementById('sleep-history');
+  ct.innerHTML = '<div class="spinner"></div>';
+  const days = [];
+  for(let i=0;i<30;i++) days.push(daysAgo(i));
+  const recs = await Promise.all(days.map(d=>getSleep(d)));
+  const entries = days.map((d,i)=>({ds:d, rec:recs[i]||{}, hrs:sleepHours(recs[i]||{})}));
+
+  // Wake streak = consecutive days back from today with wakeTime set
+  let streak = 0;
+  for(const e of entries){ if(e.rec?.wakeTime) streak++; else break; }
+  document.getElementById('sleep-live-streak').textContent = streak+' day'+(streak!==1?'s':'');
+
+  // Last 7 days stats
+  const last7 = entries.slice(0,7).filter(e=>e.hrs!=null);
+  const avg7 = last7.length ? last7.reduce((s,e)=>s+e.hrs,0)/last7.length : 0;
+  document.getElementById('sleep-avg').textContent = avg7 ? fmtHours(avg7) : '0h';
+  const last7wake = entries.slice(0,7).filter(e=>e.rec?.wakeTime).map(e=>parseTime(e.rec.wakeTime));
+  const last7bed  = entries.slice(0,7).filter(e=>e.rec?.bedTime ).map(e=>parseTime(e.rec.bedTime));
+  const avgTime = arr => {
+    if(!arr.length) return '—';
+    const m = Math.round(arr.reduce((s,x)=>s+x,0)/arr.length);
+    const hh=Math.floor(m/60), mm=m%60;
+    return fmt12(`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`);
+  };
+  document.getElementById('sleep-avg-wake').textContent = avgTime(last7wake);
+  document.getElementById('sleep-avg-bed').textContent  = avgTime(last7bed);
+  const total30 = entries.filter(e=>e.hrs!=null).reduce((s,e)=>s+e.hrs,0);
+  document.getElementById('sleep-total').textContent = total30 ? Math.round(total30)+'h' : '0h';
+
+  // History list (14 days)
+  const last14 = entries.slice(0,14);
+  ct.innerHTML = last14.map(e=>{
+    const dd = new Date(e.ds+'T00:00:00');
+    const label = dd.toLocaleDateString('en-SG',{weekday:'short',month:'short',day:'numeric'});
+    const pct = e.hrs!=null ? Math.min(100, (e.hrs/10)*100) : 0;
+    return `<div class="sleep-history-row">
+      <div class="date">${label}</div>
+      <div class="sleep-bar"><div class="sleep-bar-fill" style="width:${pct}%"></div></div>
+      <div class="bed text-xs text-muted">${fmt12(e.rec?.bedTime)}</div>
+      <div class="wake text-xs text-muted">${fmt12(e.rec?.wakeTime)}</div>
+      <div class="hrs">${e.hrs!=null?fmtHours(e.hrs):'—'}</div>
+    </div>`;
+  }).join('');
+}
+
 /* ===== MODAL ===== */
 function renderPsGrid(){
   document.getElementById('ps-grid').innerHTML=PRINCIPLES.map(p=>`
@@ -985,8 +1354,39 @@ function openModal(preId=null){
   document.getElementById('ps-fields').innerHTML='';
   document.getElementById('pcb').classList.remove('visible');
   document.querySelectorAll('.ps-item').forEach(e=>e.classList.remove('selected'));
+  document.getElementById('m-use-timing').checked = false;
+  document.getElementById('m-hours').value = 1;
+  document.getElementById('timing-fields').classList.remove('visible');
+  updateTimingPreview();
   if(preId) selectPrin(preId);
   setTimeout(()=>document.getElementById('m-name').focus(),100);
+}
+function toggleTimingFields(){
+  const on = document.getElementById('m-use-timing').checked;
+  document.getElementById('timing-fields').classList.toggle('visible', on);
+  updateTimingPreview();
+}
+function bumpHours(delta){
+  const el=document.getElementById('m-hours');
+  let v=parseFloat(el.value||'0')+delta;
+  if(v<0) v=0; if(v>24) v=24;
+  el.value=v;
+  updateTimingPreview();
+}
+function updateTimingPreview(){
+  const el=document.getElementById('m-timing-preview');
+  if(!el) return;
+  const h=parseFloat(document.getElementById('m-hours').value||'0');
+  const wake = todaySleep?.wakeTime;
+  if(wake){
+    const w = parseTime(wake);
+    const t = w + h*60;
+    const hh = Math.floor((t%1440)/60), mm = Math.round(t%60);
+    const str = fmt12(`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`);
+    el.textContent = `With today's wake time (${fmt12(wake)}), this fires around ${str}.`;
+  } else {
+    el.textContent = 'Set a wake time on the Sleep page so the app can reorder habits live.';
+  }
 }
 function closeModal(){ document.getElementById('modal-ol').classList.remove('open'); }
 function selectPrin(id){
@@ -1014,10 +1414,18 @@ async function submitHabit(){
   const p=PRINCIPLES.find(pr=>pr.id===selPrin);
   const details={};
   document.querySelectorAll('.pf').forEach(inp=>{ const v=inp.value.trim(); if(v) details[inp.dataset.key]=v; });
+  const useTiming = document.getElementById('m-use-timing').checked;
+  let hoursAfterWake = null;
+  if(useTiming){
+    const v = parseFloat(document.getElementById('m-hours').value);
+    if(isNaN(v) || v<0 || v>24){ toast('Enter a valid number of hours (0–24).','warning'); return; }
+    hoursAfterWake = Math.round(v*2)/2; // snap to 0.5
+  }
   try{
     await db.collection('users').doc(CU.uid).collection('habits').add({
       name, type, principleId:selPrin, principleTitle:p.title, details,
       identityStatement:ident, isActive:true,
+      useTiming, hoursAfterWake,
       currentStreak:0, longestStreak:0, totalCompletions:0, lastCheckinDate:null,
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -1109,8 +1517,9 @@ document.addEventListener('keydown',e=>{
     if(e.key==='1'){e.preventDefault();navigate('tracker');}
     if(e.key==='2'){e.preventDefault();navigate('dashboard');}
     if(e.key==='3'){e.preventDefault();navigate('habits');}
-    if(e.key==='4'){e.preventDefault();navigate('principles');}
-    if(e.key==='5'){e.preventDefault();navigate('insights');}
+    if(e.key==='4'){e.preventDefault();navigate('sleep');}
+    if(e.key==='5'){e.preventDefault();navigate('principles');}
+    if(e.key==='6'){e.preventDefault();navigate('insights');}
     if(e.key==='n'){e.preventDefault();openModal();}
   }
 });
