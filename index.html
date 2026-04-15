@@ -573,14 +573,23 @@ function setGreeting(){
 /* ===== SUBSCRIPTIONS ===== */
 function subscribe(){
   const uid=CU.uid, td=today();
+  // No composite query — fetch all habits, filter+sort client-side.
+  // Avoids the "missing index" error on (isActive asc, createdAt desc).
   unsubH = db.collection('users').doc(uid).collection('habits')
-    .where('isActive','==',true).orderBy('createdAt','desc')
     .onSnapshot(snap=>{
-      habits = snap.docs.map(d=>({id:d.id,...d.data()}));
+      habits = snap.docs
+        .map(d=>({id:d.id,...d.data()}))
+        .filter(h=>h.isActive!==false)
+        .sort((a,b)=>{
+          const at = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt?.seconds ? a.createdAt.seconds*1000 : 0);
+          const bt = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt?.seconds ? b.createdAt.seconds*1000 : 0);
+          return bt - at;
+        });
       updateBadge(); renderCurrent();
-    }, e=>{ console.error(e); toast('Error loading habits','error'); });
+    }, e=>{ console.error('habits listener error:',e); toast('Error loading habits: '+(e.message||e.code||e),'error'); });
   unsubC = db.collection('users').doc(uid).collection('logs').doc(td)
-    .onSnapshot(snap=>{ checkins=snap.exists?(snap.data()||{}):{}; renderCurrent(); });
+    .onSnapshot(snap=>{ checkins=snap.exists?(snap.data()||{}):{}; renderCurrent(); },
+      e=>{ console.error('logs listener error:',e); toast('Error loading logs: '+(e.message||e.code||e),'error'); });
 }
 
 /* ===== NAVIGATION ===== */
