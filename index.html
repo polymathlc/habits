@@ -155,6 +155,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* TRACKER TABLE */
 .tracker-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.month-nav{display:inline-flex;align-items:center;gap:.25rem;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:2px}
+.month-nav .mn-arrow{padding:.35rem .6rem;border:none;background:transparent}
+.month-nav .mn-arrow:hover{background:var(--surface2);color:var(--amber)}
+.month-nav .mn-label{font-family:var(--font-d);font-size:.95rem;font-weight:700;color:var(--text);padding:0 .65rem;min-width:130px;text-align:center;letter-spacing:.02em}
+.tracker-table thead th.day-col.weekend{background:var(--bg3)}
+.tracker-table td.day-cell.weekend{background:#1a1a2a}
+.tracker-table td.day-cell.weekend:hover{background:var(--surface2)}
+.tracker-table td.day-cell.weekend.done{background:var(--green)}
+.tracker-table thead th.total-col{background:var(--bg2);width:62px;min-width:62px;text-align:center;border-left:2px solid var(--border2);position:sticky;right:0;z-index:2}
+.tracker-table td.total-cell{width:62px;min-width:62px;text-align:center;vertical-align:middle;background:var(--bg2);font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--amber);border-left:2px solid var(--border2);position:sticky;right:0;z-index:1}
+.tracker-table td.total-cell .total-sub{display:block;font-family:var(--font-b);font-size:.6rem;font-weight:500;color:var(--text3);margin-top:2px;letter-spacing:.05em}
 .tracker-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:auto;max-width:100%;box-shadow:0 4px 24px rgba(0,0,0,.2)}
 .tracker-table{border-collapse:separate;border-spacing:0;width:100%}
 .tracker-table thead th{background:var(--bg2);color:var(--text3);font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;padding:.9rem .35rem;font-weight:600;border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:sticky;top:0;z-index:2}
@@ -332,9 +343,12 @@ textarea.form-input{resize:vertical;min-height:72px}
       <div class="page-header fb">
         <div><h2>Habit Tracker</h2><p id="tracker-date-range">Tap any cell to toggle that day</p></div>
         <div class="tracker-controls">
-          <button class="btn btn-ghost btn-sm" onclick="shiftTracker(-7)" title="Previous week">◀ Prev</button>
-          <button class="btn btn-ghost btn-sm" onclick="shiftTrackerToday()" title="Jump to today">Today</button>
-          <button class="btn btn-ghost btn-sm" onclick="shiftTracker(7)" title="Next week">Next ▶</button>
+          <div class="month-nav" role="group" aria-label="Month selector">
+            <button class="btn btn-ghost btn-sm mn-arrow" onclick="shiftTrackerMonth(-1)" title="Previous month (←)" aria-label="Previous month">◀</button>
+            <div class="mn-label" id="tracker-month-label">—</div>
+            <button class="btn btn-ghost btn-sm mn-arrow" onclick="shiftTrackerMonth(1)" title="Next month (→)" aria-label="Next month">▶</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="shiftTrackerToday()" title="Jump to current month">Today</button>
           <button class="btn btn-primary" onclick="openModal()">＋ Add Habit</button>
         </div>
       </div>
@@ -523,8 +537,9 @@ const PRINCIPLES = [
 /* ===== APP STATE ===== */
 let CU = null, habits = [], checkins = {}, logsCache = {};
 let selPrin = null, unsubH = null, unsubC = null, curPage = 'tracker';
-let trackerEndOffset = 0; // 0 = today is rightmost column
-const TRACKER_DAYS = 14;
+// Selected month as {y:year, m:monthIndex 0-11}. Defaults to current month.
+let trackerMonth = (() => { const d=new Date(); return {y:d.getFullYear(), m:d.getMonth()}; })();
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 /* ===== DATE HELPERS ===== */
 const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -608,29 +623,55 @@ function renderCurrent(){
 }
 
 /* ===== TRACKER TABLE ===== */
+function monthDates(y, m){
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const out = [];
+  for(let d=1; d<=daysInMonth; d++){
+    out.push(`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+  }
+  return out;
+}
+
 async function renderTracker(){
   const zone = document.getElementById('tracker-zone');
   const rangeLbl = document.getElementById('tracker-date-range');
+  const monthLbl = document.getElementById('tracker-month-label');
+  if(monthLbl) monthLbl.textContent = `${MONTH_NAMES[trackerMonth.m]} ${trackerMonth.y}`;
   if(!habits.length){
     zone.innerHTML = `<div class="empty-state" style="padding:4rem 1.5rem"><div class="es-icon">📅</div><div class="es-title">No habits yet</div><div class="es-sub">Click "＋ Add Habit" above to start tracking</div></div>`;
     if(rangeLbl) rangeLbl.textContent = 'Add your first habit to begin';
     return;
   }
-  const dates = [];
-  for(let i=TRACKER_DAYS-1; i>=0; i--) dates.push(daysAgo(trackerEndOffset + i));
+  const dates = monthDates(trackerMonth.y, trackerMonth.m);
   const logs = {};
   await Promise.all(dates.map(async d => { logs[d] = await getLog(d); }));
   const td = today();
   const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const thead = `<thead><tr><th class="habit-col">Habit</th>${dates.map(d=>{
     const dd = new Date(d+'T00:00:00');
+    const dow = dd.getDay();
     const isToday = d===td;
-    return `<th class="day-col${isToday?' today':''}" title="${d}"><span class="day-num">${dd.getDate()}</span><span class="day-dow">${DOW[dd.getDay()]}</span></th>`;
-  }).join('')}</tr></thead>`;
+    const isWeekend = dow===0 || dow===6;
+    return `<th class="day-col${isToday?' today':''}${isWeekend?' weekend':''}" title="${d}"><span class="day-num">${dd.getDate()}</span><span class="day-dow">${DOW[dow]}</span></th>`;
+  }).join('')}<th class="total-col" title="Days completed in month">TOTAL</th></tr></thead>`;
   const tbody = `<tbody>${habits.map(h=>{
     const typeIcon = h.type==='break'?'⛔':'🌱';
     const cr = h.createdAt?.toDate ? h.createdAt.toDate() : new Date(0);
     const crStr = fmtDate(cr);
+    let monthTotal = 0, monthEligible = 0;
+    const cellsHtml = dates.map(d=>{
+      const dd = new Date(d+'T00:00:00');
+      const dow = dd.getDay();
+      const isWeekend = dow===0 || dow===6;
+      const done = !!logs[d]?.[h.id]?.completed;
+      const isToday = d===td;
+      const isFuture = d > td;
+      const beforeCreation = d < crStr;
+      if(isFuture || beforeCreation) return `<td class="day-cell future${isWeekend?' weekend':''}"></td>`;
+      monthEligible++;
+      if(done) monthTotal++;
+      return `<td class="day-cell${done?' done':''}${isToday?' today':''}${isWeekend?' weekend':''}" onclick="toggleCell('${h.id}','${d}')" title="${d}"></td>`;
+    }).join('');
     return `<tr><td class="habit-cell">
       <div class="h-name">${typeIcon} ${escHtml(h.name)}</div>
       <div class="h-meta">
@@ -638,28 +679,26 @@ async function renderTracker(){
         <span>· ${h.totalCompletions||0} total</span>
         <button class="h-del" onclick="event.stopPropagation();deleteHabit('${h.id}')" title="Delete habit">🗑</button>
       </div>
-    </td>${dates.map(d=>{
-      const done = !!logs[d]?.[h.id]?.completed;
-      const isToday = d===td;
-      const isFuture = d > td;
-      const beforeCreation = d < crStr;
-      if(isFuture || beforeCreation) return `<td class="day-cell future"></td>`;
-      return `<td class="day-cell${done?' done':''}${isToday?' today':''}" onclick="toggleCell('${h.id}','${d}')" title="${d}"></td>`;
-    }).join('')}</tr>`;
+    </td>${cellsHtml}<td class="total-cell" title="${monthTotal} of ${monthEligible} tracked days">${monthTotal}<span class="total-sub">/ ${monthEligible||dates.length}</span></td></tr>`;
   }).join('')}</tbody>`;
   zone.innerHTML = `<table class="tracker-table">${thead}${tbody}</table>`;
-  const first = new Date(dates[0]+'T00:00:00');
-  const last = new Date(dates[dates.length-1]+'T00:00:00');
-  const fmt = d => d.toLocaleDateString('en-SG',{month:'short',day:'numeric'});
-  if(rangeLbl) rangeLbl.textContent = `${fmt(first)} — ${fmt(last)} · Click any cell to toggle`;
+  if(rangeLbl){
+    const now = new Date();
+    const isCurrentMonth = (trackerMonth.y===now.getFullYear() && trackerMonth.m===now.getMonth());
+    rangeLbl.textContent = isCurrentMonth
+      ? `${dates.length} days · Use ← / → to change month · Click any cell to toggle`
+      : `${dates.length} days · Use ← / → to change month · "Today" returns to current month`;
+  }
 }
 
-function shiftTracker(days){
-  trackerEndOffset = Math.max(0, trackerEndOffset + days);
+function shiftTrackerMonth(delta){
+  const d = new Date(trackerMonth.y, trackerMonth.m + delta, 1);
+  trackerMonth = {y:d.getFullYear(), m:d.getMonth()};
   renderTracker();
 }
 function shiftTrackerToday(){
-  trackerEndOffset = 0;
+  const d = new Date();
+  trackerMonth = {y:d.getFullYear(), m:d.getMonth()};
   renderTracker();
 }
 
@@ -1112,8 +1151,16 @@ document.addEventListener('keydown',e=>{
     if(e.key==='4'){e.preventDefault();navigate('principles');}
     if(e.key==='5'){e.preventDefault();navigate('insights');}
     if(e.key==='n'){e.preventDefault();openModal();}
+    return;
+  }
+  // Month navigation via arrow keys on the tracker page, only when not typing in a field.
+  if(curPage==='tracker' && !isModalOpen() && !isTypingTarget(e.target)){
+    if(e.key==='ArrowLeft'){ e.preventDefault(); shiftTrackerMonth(-1); }
+    else if(e.key==='ArrowRight'){ e.preventDefault(); shiftTrackerMonth(1); }
   }
 });
+function isModalOpen(){ const ol=document.getElementById('modal-ol'); return !!(ol && ol.classList.contains('open')); }
+function isTypingTarget(el){ if(!el) return false; const t=el.tagName; return t==='INPUT'||t==='TEXTAREA'||t==='SELECT'||el.isContentEditable; }
 window.addEventListener('resize',()=>{ const cv=document.getElementById('confetti-cv'); cv.width=window.innerWidth; cv.height=window.innerHeight; });
 </script>
 </body>
